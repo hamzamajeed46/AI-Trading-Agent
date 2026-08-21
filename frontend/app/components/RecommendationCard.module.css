@@ -1,0 +1,165 @@
+.card {
+  width: 100%;
+  max-width: 26rem;
+  background: var(--surface);
+  border: 1px solid var(--hairline);
+  border-radius: 0.75rem;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  box-shadow: 0 20px 60px -20px rgba(0, 0, 0, 0.6);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.tickerRow {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+}
+
+.ticker {
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.15rem 0.5rem;
+  border-radius: 0.25rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.badgeBuy {
+  color: var(--color-buy);
+  background: var(--color-buy-dim);
+}
+
+.badgeSell {
+  color: var(--color-sell);
+  background: var(--color-sell-dim);
+}
+
+.liveTag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.75rem;
+  color: var(--foreground-muted);
+  letter-spacing: 0.04em;
+}
+
+.timestamp {
+  font-size: 0.75rem;
+  color: var(--foreground-muted);
+}
+
+.rationale {
+  font-size: 0.85rem;
+  color: var(--foreground-muted);
+  line-height: 1.5;
+  border-left: 2px solid var(--hairline);
+  padding-left: 0.75rem;
+}
+
+.orderDetails {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(5.5rem, 1fr));
+  gap: 0.75rem;
+  padding: 0.75rem;
+  border-radius: 0.375rem;
+  background: var(--surface-raised);
+  border: 1px solid var(--hairline);
+}
+
+.orderDetail {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.orderDetailLabel {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--foreground-muted);
+}
+
+.warningStrip {
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.375rem;
+  background: var(--color-pending-dim);
+  color: var(--color-pending);
+  font-size: 0.75rem;
+  line-height: 1.4;
+}
+
+.pendingStrip {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.375rem;
+  background: var(--color-pending-dim);
+  color: var(--color-pending);
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.pendingDot {
+  width: 0.4rem;
+  height: 0.4rem;
+  border-radius: 50%;
+  background: var(--color-pending);
+  flex-shrink: 0;
+}
+
+.actions {
+  display: flex;
+  gap: 0.6rem;
+}
+
+.actionButton {
+  flex: 1;
+  padding: 0.6rem;
+  border-radius: 0.375rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  cursor: default;
+}
+
+.actionButton:disabled {
+  opacity: 0.45;
+}
+
+.interactive:not(:disabled) {
+  cursor: pointer;
+}
+
+.interactive:not(:disabled):hover {
+  filter: brightness(1.2);
+}
+
+.approve {
+  background: transparent;
+  border: 1px solid var(--color-buy);
+  color: var(--color-buy);
+}
+
+.reject {
+  background: transparent;
+  border: 1px solid var(--color-sell);
+  color: var(--color-sell);
+}

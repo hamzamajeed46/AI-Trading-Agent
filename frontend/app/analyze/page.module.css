@@ -1,0 +1,202 @@
+.wrap {
+  width: 100%;
+  max-width: 40rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.formCard {
+  background: var(--surface);
+  border: 1px solid var(--hairline);
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.eyebrow {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--foreground-muted);
+}
+
+.form {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.form input {
+  flex: 1;
+  text-transform: uppercase;
+}
+
+.brokerPrompt {
+  padding: 0.75rem 1rem;
+  border-radius: 0.375rem;
+  background: var(--color-pending-dim);
+  color: var(--color-pending);
+  font-size: 0.85rem;
+}
+
+.loading {
+  color: var(--foreground-muted);
+  font-size: 0.85rem;
+}
+
+.resultCard {
+  background: var(--surface);
+  border: 1px solid var(--hairline);
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.resultHeader {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.symbol {
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.decisionBadge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.15rem 0.6rem;
+  border-radius: 0.25rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.decisionBuy {
+  color: var(--color-buy);
+  background: var(--color-buy-dim);
+}
+
+.decisionSell {
+  color: var(--color-sell);
+  background: var(--color-sell-dim);
+}
+
+.decisionHold {
+  color: var(--foreground-muted);
+  background: var(--surface-raised);
+}
+
+.liveTag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.75rem;
+  color: var(--foreground-muted);
+  letter-spacing: 0.04em;
+}
+
+.provisionalTag {
+  color: var(--color-pending);
+  font-weight: 700;
+  font-size: 0.75rem;
+  letter-spacing: 0.02em;
+}
+
+.assetName {
+  font-size: 0.8rem;
+  color: var(--foreground-muted);
+  margin-top: -0.5rem;
+}
+
+.metricsGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.5rem;
+  font-size: 0.85rem;
+}
+
+@media (min-width: 480px) {
+  .metricsGrid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+.metric {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  padding: 0.5rem;
+  background: var(--surface-raised);
+  border-radius: 0.375rem;
+}
+
+.metricLabel {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--foreground-muted);
+}
+
+.rationale {
+  font-size: 0.9rem;
+  line-height: 1.6;
+  border-left: 2px solid var(--hairline);
+  padding-left: 0.75rem;
+  color: var(--foreground-muted);
+}
+
+.transcript {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.roundLabel {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--foreground-muted);
+  text-transform: uppercase;
+}
+
+.argument {
+  padding: 0.6rem 0.75rem;
+  border-radius: 0.375rem;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  border-left: 3px solid var(--hairline);
+  background: var(--surface-raised);
+  margin-top: 0.4rem;
+}
+
+.argumentBull {
+  border-left-color: var(--color-buy);
+}
+
+.argumentBear {
+  border-left-color: var(--color-sell);
+}
+
+.argumentLabel {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.argumentPending {
+  padding: 0.6rem 0.75rem;
+  border-radius: 0.375rem;
+  font-size: 0.85rem;
+  border-left: 3px solid var(--hairline);
+  background: var(--surface-raised);
+  margin-top: 0.4rem;
+  color: var(--foreground-muted);
+  font-style: italic;
+}

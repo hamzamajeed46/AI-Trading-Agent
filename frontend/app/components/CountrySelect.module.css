@@ -1,0 +1,48 @@
+.wrap {
+  position: relative;
+}
+
+.listbox {
+  position: absolute;
+  top: calc(100% + 0.4rem);
+  left: 0;
+  right: 0;
+  max-height: 14rem;
+  overflow-y: auto;
+  background: var(--surface-raised);
+  border: 1px solid var(--hairline);
+  border-radius: 0.375rem;
+  padding: 0.25rem;
+  margin: 0;
+  z-index: 20;
+  list-style: none;
+  box-shadow: 0 12px 30px -10px rgba(0, 0, 0, 0.7);
+}
+
+.option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.45rem 0.6rem;
+  border-radius: 0.25rem;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.option:hover,
+.optionActive {
+  background: var(--surface);
+  color: var(--foreground);
+}
+
+.dialCode {
+  color: var(--foreground-muted);
+  font-size: 0.8rem;
+}
+
+.empty {
+  padding: 0.5rem 0.6rem;
+  color: var(--foreground-muted);
+  font-size: 0.85rem;
+}

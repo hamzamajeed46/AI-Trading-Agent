@@ -1,0 +1,25 @@
+[project]
+name = "trading-agent-backend"
+version = "0.1.0"
+requires-python = ">=3.12"
+dependencies = [
+    "alpaca-py",
+    "python-dotenv",
+    "fastapi",
+    "uvicorn[standard]",
+    "sqlalchemy",
+    "alembic",
+    "psycopg[binary]",
+    "bcrypt",
+    "pyjwt",
+    "cryptography",
+    "pydantic-settings",
+    "email-validator",
+    "pydantic-extra-types[phonenumbers]>=2.11.1",
+    "langgraph>=1.2.11",
+    "langchain-groq>=1.1.3",
+    "langgraph-checkpoint-postgres>=3.1.2",
+]
+
+[tool.uv]
+package = false

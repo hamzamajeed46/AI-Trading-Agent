@@ -1,0 +1,25 @@
+.markdown p {
+  margin: 0;
+}
+
+.markdown p + p {
+  margin-top: 0.5rem;
+}
+
+.markdown ul,
+.markdown ol {
+  margin: 0.25rem 0 0;
+  padding-left: 1.1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.markdown li {
+  margin: 0;
+}
+
+.markdown strong {
+  color: var(--foreground);
+  font-weight: 700;
+}

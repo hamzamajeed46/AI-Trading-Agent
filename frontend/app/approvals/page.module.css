@@ -1,0 +1,121 @@
+.wrap {
+  width: 100%;
+  max-width: 64rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.formCard {
+  background: var(--surface);
+  border: 1px solid var(--hairline);
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.eyebrow {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--foreground-muted);
+}
+
+.helpText {
+  color: var(--foreground-muted);
+  font-size: 0.85rem;
+  line-height: 1.5;
+}
+
+.form {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.form input {
+  flex: 1;
+  text-transform: uppercase;
+}
+
+.brokerPrompt {
+  padding: 0.75rem 1rem;
+  border-radius: 0.375rem;
+  background: var(--color-pending-dim);
+  color: var(--color-pending);
+  font-size: 0.85rem;
+}
+
+.loading {
+  color: var(--foreground-muted);
+  font-size: 0.85rem;
+}
+
+.holdResult {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.75rem 1rem;
+  border-radius: 0.375rem;
+  background: var(--surface-raised);
+  border: 1px solid var(--hairline);
+  font-size: 0.85rem;
+}
+
+.holdBadge {
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.outcomeSuccess {
+  padding: 0.75rem 1rem;
+  border-radius: 0.375rem;
+  background: var(--color-buy-dim);
+  color: var(--color-buy);
+  font-size: 0.85rem;
+}
+
+.outcomeNeutral {
+  padding: 0.75rem 1rem;
+  border-radius: 0.375rem;
+  background: var(--surface-raised);
+  border: 1px solid var(--hairline);
+  font-size: 0.85rem;
+  color: var(--foreground-muted);
+}
+
+.listSection {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.sectionLabel {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--foreground-muted);
+}
+
+.empty {
+  color: var(--foreground-muted);
+  font-size: 0.9rem;
+  padding: 2rem 0;
+  text-align: center;
+  border: 1px dashed var(--hairline);
+  border-radius: 0.75rem;
+}
+
+.cardGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.25rem;
+}
+
+@media (min-width: 720px) {
+  .cardGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

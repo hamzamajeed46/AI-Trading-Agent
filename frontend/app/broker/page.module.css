@@ -1,0 +1,119 @@
+.wrap {
+  width: 100%;
+  max-width: 28rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--hairline);
+  border-radius: 0.75rem;
+  padding: 1.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.eyebrow {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: var(--foreground-muted);
+}
+
+.helpText {
+  color: var(--foreground-muted);
+  font-size: 0.85rem;
+  line-height: 1.5;
+}
+
+.statusChip {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.375rem;
+  background: var(--surface-raised);
+  border: 1px solid var(--hairline);
+  font-size: 0.8rem;
+}
+
+.statusDot {
+  width: 0.45rem;
+  height: 0.45rem;
+  border-radius: 50%;
+  background: var(--foreground-muted);
+  flex-shrink: 0;
+}
+
+.statusDotActive {
+  background: var(--color-buy);
+}
+
+.statusTextActive {
+  color: var(--color-buy);
+}
+
+.statusTextMuted {
+  color: var(--foreground-muted);
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--foreground-muted);
+}
+
+.modeToggle {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.modeButton {
+  flex: 1;
+  padding: 0.5rem;
+  border-radius: 0.375rem;
+  border: 1px solid var(--hairline);
+  background: transparent;
+  color: var(--foreground-muted);
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.modeButtonPaperActive {
+  border-color: var(--color-buy);
+  color: var(--color-buy);
+  background: var(--color-buy-dim);
+}
+
+.modeButtonLiveActive {
+  border-color: var(--color-pending);
+  color: var(--color-pending);
+  background: var(--color-pending-dim);
+}
+
+.modeHint {
+  font-size: 0.75rem;
+  color: var(--foreground-muted);
+}
+
+.modeHintLive {
+  color: var(--color-pending);
+}

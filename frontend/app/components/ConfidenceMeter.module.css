@@ -1,0 +1,37 @@
+.wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.label {
+  font-size: 0.75rem;
+  color: var(--foreground-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+}
+
+.meter {
+  flex: 1;
+  display: flex;
+  gap: 3px;
+}
+
+.segment {
+  flex: 1;
+  height: 0.5rem;
+  border-radius: 2px;
+  background: var(--hairline);
+}
+
+.segmentFilled {
+  background: var(--meter-color, var(--color-buy));
+}
+
+.value {
+  font-size: 1rem;
+  font-weight: 700;
+  min-width: 3ch;
+  text-align: right;
+}
