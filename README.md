@@ -40,4 +40,5 @@ Alpaca keys), `GET /broker/status`. Interactive docs at http://localhost:8000/do
 
 ## Status
 
-Phases 0 and 1 done. See `PLAN.md` for the full phased build order (0-9).
+Phases 0-5 done (Phase 5 = human-in-the-loop approvals with Postgres-persisted graph state). See
+`PLAN.md` for the full phased build order (0-9); Phase 6 (live streaming + WebSocket) is next.

@@ -67,6 +67,7 @@ export default function ApprovalsPage() {
     if (!symbol.trim()) return;
     setStartError(null);
     setLastNonPending(null);
+    setLastOutcome(null);
     setStarting(true);
     try {
       const result = await startRecommendation(symbol.trim());
