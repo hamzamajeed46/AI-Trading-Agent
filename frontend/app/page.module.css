@@ -1,26 +1,26 @@
+/* Mobile first: base styles are the phone layout; media queries add columns. */
 .wrap {
   width: 100%;
-  max-width: 64rem;
+  max-width: var(--container);
   display: flex;
   flex-direction: column;
-  gap: 4rem;
+  gap: var(--space-8);
 }
 
+/* ------------------------------------------------------------------ Hero */
 .hero {
+  position: relative;
   display: grid;
   grid-template-columns: 1fr;
-  gap: 2.5rem;
+  gap: var(--space-6);
   align-items: center;
+  padding: var(--space-5) 0 var(--space-4);
 }
 
-@media (min-width: 900px) {
-  .hero {
-    grid-template-columns: 1fr 1fr;
-    gap: 3rem;
-  }
-  .heroText {
-    order: -1;
-  }
+.heroText,
+.heroCard {
+  position: relative;
+  z-index: 1;
 }
 
 .heroCard {
@@ -28,103 +28,224 @@
   justify-content: center;
 }
 
-.eyebrow {
-  font-size: 0.75rem;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  color: var(--color-pending);
+.heroCardInner {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 0.35rem 0.85rem;
+  margin-bottom: var(--space-4);
+  border: 1px solid var(--hairline-strong);
+  border-radius: var(--radius-pill);
+  background: rgba(255, 255, 255, 0.04);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
-  margin-bottom: 0.75rem;
-}
-
-.heroText h1 {
-  font-size: clamp(1.8rem, 4vw, 2.6rem);
-  line-height: 1.15;
-  margin-bottom: 1rem;
-}
-
-.heroText p {
   color: var(--foreground-muted);
+}
+
+.h1 {
+  font-size: var(--text-hero);
+  line-height: 1.05;
+  letter-spacing: -0.035em;
+  margin-bottom: var(--space-4);
+}
+
+.gradientText {
+  background: var(--gradient-text);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.lede {
+  color: var(--foreground-muted);
+  font-size: var(--text-lg);
   line-height: 1.6;
-  margin-bottom: 1.5rem;
   max-width: 34rem;
+  margin-bottom: var(--space-5);
 }
 
 .ctaRow {
   display: flex;
-  gap: 0.75rem;
+  gap: var(--space-3);
   flex-wrap: wrap;
 }
 
-.section h2 {
-  font-size: 1rem;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--foreground-muted);
-  margin-bottom: 1.25rem;
-}
-
-.tickerList {
+/* --------------------------------------------------------------- Sections */
+.section {
   display: flex;
   flex-direction: column;
-  border-top: 1px solid var(--hairline);
+  gap: var(--space-6);
 }
 
-.tickerRow {
-  display: grid;
-  grid-template-columns: 8rem 1fr;
-  gap: 1rem;
-  padding: 1rem 0;
-  border-bottom: 1px solid var(--hairline);
+.head {
+  max-width: 40rem;
 }
 
-@media (max-width: 640px) {
-  .tickerRow {
-    grid-template-columns: 1fr;
-    gap: 0.35rem;
-  }
-}
-
-.tickerLabel {
+.eyebrow {
+  margin-bottom: var(--space-2);
+  font-size: var(--text-xs);
   font-weight: 700;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  background: var(--gradient-accent);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
 
-.tickerDesc {
+.head h2,
+.footer h2 {
+  font-size: var(--text-2xl);
+  line-height: 1.15;
+  margin-bottom: var(--space-3);
+}
+
+.sub {
   color: var(--foreground-muted);
-  line-height: 1.5;
+  line-height: 1.65;
 }
 
+.link {
+  color: var(--accent-teal);
+  border-bottom: 1px solid rgba(25, 227, 195, 0.4);
+}
+
+.link:hover {
+  border-bottom-color: var(--accent-teal);
+}
+
+/* --------------------------------------------------------------- Features */
+.features {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-4);
+}
+
+.feature {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-5);
+  transition: transform 0.3s var(--ease-out), border-color 0.3s, box-shadow 0.3s;
+}
+
+.feature:hover {
+  transform: translateY(-4px);
+  border-color: rgba(25, 227, 195, 0.4);
+  box-shadow: var(--shadow-card), var(--glow-teal);
+}
+
+.featureIcon {
+  display: inline-grid;
+  place-items: center;
+  width: 2.6rem;
+  height: 2.6rem;
+  margin-bottom: var(--space-2);
+  border-radius: var(--radius-md);
+  color: var(--accent-teal);
+  background: var(--color-gain-dim);
+  border: 1px solid rgba(25, 227, 195, 0.25);
+}
+
+.feature h3 {
+  font-size: var(--text-lg);
+}
+
+.feature p {
+  color: var(--foreground-muted);
+  font-size: var(--text-sm);
+  line-height: 1.6;
+}
+
+/* --------------------------------------------------------------- Pipeline */
 .flow {
   display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.5rem;
-  font-size: 0.85rem;
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--space-2);
+  font-size: var(--text-sm);
 }
 
 .flowStep {
-  padding: 0.4rem 0.75rem;
+  padding: 0.6rem 1rem;
   border: 1px solid var(--hairline);
-  border-radius: 0.375rem;
+  border-radius: var(--radius-md);
   background: var(--surface);
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  backdrop-filter: blur(var(--glass-blur));
+  text-align: center;
   white-space: nowrap;
+  transition: transform 0.2s, border-color 0.2s;
+}
+
+.flowStep:hover {
+  transform: translateY(-2px);
+  border-color: var(--hairline-strong);
 }
 
 .flowStepPending {
   border-color: var(--color-pending);
   color: var(--color-pending);
+  box-shadow: 0 0 28px -6px rgba(167, 148, 255, 0.5);
 }
 
 .flowArrow {
-  color: var(--foreground-muted);
+  color: var(--foreground-faint);
+  text-align: center;
+  transform: rotate(90deg);
+  line-height: 1;
 }
 
+/* ----------------------------------------------------------------- Footer */
 .footer {
-  border-top: 1px solid var(--hairline);
-  padding-top: 2rem;
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
   align-items: flex-start;
+  gap: var(--space-2);
+  padding: var(--space-6) var(--space-5);
+  background:
+    radial-gradient(30rem 14rem at 0% 0%, rgba(25, 227, 195, 0.12), transparent 70%),
+    var(--surface);
+}
+
+/* ---------------------------------------------------------- Breakpoints */
+@media (min-width: 640px) {
+  .features {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .flow {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+  .flowArrow {
+    transform: none;
+  }
+  .footer {
+    padding: var(--space-7);
+  }
+}
+
+@media (min-width: 900px) {
+  .wrap {
+    gap: 7rem;
+  }
+  .hero {
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: var(--space-7);
+    padding: var(--space-7) 0 var(--space-6);
+  }
+  .features {
+    grid-template-columns: repeat(3, 1fr);
+  }
 }

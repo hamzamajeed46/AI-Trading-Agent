@@ -3,12 +3,14 @@
   max-width: 26rem;
   background: var(--surface);
   border: 1px solid var(--hairline);
-  border-radius: 0.75rem;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(140%);
+  backdrop-filter: blur(var(--glass-blur)) saturate(140%);
   padding: 1.25rem;
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  box-shadow: 0 20px 60px -20px rgba(0, 0, 0, 0.6);
 }
 
 .header {

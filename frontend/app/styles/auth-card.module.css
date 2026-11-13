@@ -6,7 +6,10 @@
   gap: 1.25rem;
   background: var(--surface);
   border: 1px solid var(--hairline);
-  border-radius: 0.75rem;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(140%);
+  backdrop-filter: blur(var(--glass-blur)) saturate(140%);
   padding: 1.75rem;
 }
 

@@ -1,5 +1,6 @@
 "use client";
 
+import { AnimatePresence, motion } from "motion/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import {
@@ -185,9 +186,17 @@ export default function ApprovalsPage() {
           <p className={styles.empty}>Nothing awaiting approval right now.</p>
         ) : (
           <div className={styles.cardGrid}>
+            <AnimatePresence mode="popLayout">
             {pending.map((rec) => (
-              <RecommendationCard
+              <motion.div
                 key={rec.thread_id}
+                layout
+                initial={{ opacity: 0, y: 24, scale: 0.97 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.92, transition: { duration: 0.2 } }}
+                transition={{ type: "spring", stiffness: 380, damping: 32 }}
+              >
+              <RecommendationCard
                 ticker={rec.symbol}
                 decision={rec.decision as Decision}
                 confidence={Math.round(rec.confidence * 100)}
@@ -210,7 +219,9 @@ export default function ApprovalsPage() {
                 onReject={() => handleRespond(rec.thread_id, "reject")}
                 actionsDisabled={respondingThread === rec.thread_id}
               />
+              </motion.div>
             ))}
+            </AnimatePresence>
           </div>
         )}
       </div>

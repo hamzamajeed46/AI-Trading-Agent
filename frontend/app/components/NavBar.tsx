@@ -1,9 +1,11 @@
 "use client";
 
+import { motion } from "motion/react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { clearToken, getToken, me, type User } from "@/lib/api";
+import Logo from "./Logo";
 import styles from "./NavBar.module.css";
 
 export default function NavBar() {
@@ -40,16 +42,22 @@ export default function NavBar() {
         aria-current={active ? "page" : undefined}
       >
         {label}
+        {active && (
+          // Shared layoutId: the underline glides from the old link to the new one.
+          <motion.span
+            layoutId="nav-underline"
+            className={styles.underline}
+            transition={{ type: "spring", stiffness: 500, damping: 38 }}
+          />
+        )}
       </Link>
     );
   }
 
   return (
     <nav className={styles.navbar}>
-      <Link href="/" className={styles.brand}>
-        <span className={styles.bracket}>[</span>
-        <span className="mono">AI TRADING AGENT</span>
-        <span className={styles.bracket}>]</span>
+      <Link href="/" className={styles.brand} aria-label="Quorum home">
+        <Logo />
       </Link>
 
       <div className={styles.right}>

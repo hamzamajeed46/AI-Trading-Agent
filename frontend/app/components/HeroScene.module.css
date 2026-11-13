@@ -1,0 +1,54 @@
+/* Full-bleed backdrop behind the hero, faded out at the edges so it never
+   competes with text or the card. */
+.scene {
+  position: absolute;
+  top: -3rem;
+  bottom: -4rem;
+  left: 50%;
+  width: 100vw;
+  margin-left: -50vw;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.55;
+  -webkit-mask-image: linear-gradient(to bottom, transparent, #000 45%, #000 80%, transparent);
+  mask-image: linear-gradient(to bottom, transparent, #000 45%, #000 80%, transparent);
+}
+
+.scene canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* ---- Low-power fallback: CSS-only candles -------------------------------- */
+.fallback {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 0.35rem;
+  padding: 0 1rem 3rem;
+  opacity: 0.35;
+}
+
+.bar {
+  flex: 1;
+  max-width: 1.1rem;
+  border-radius: 0.2rem;
+  background: linear-gradient(180deg, var(--color-gain), transparent);
+  transform-origin: bottom;
+  animation: breathe 5s ease-in-out infinite;
+}
+
+.barDown {
+  background: linear-gradient(180deg, var(--color-loss), transparent);
+}
+
+@keyframes breathe {
+  0%,
+  100% {
+    transform: scaleY(0.7);
+  }
+  50% {
+    transform: scaleY(1.1);
+  }
+}
