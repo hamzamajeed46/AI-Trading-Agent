@@ -1,10 +1,13 @@
 from typing import Literal
 
+from langchain_core.exceptions import OutputParserException
 from langchain_core.runnables import RunnableConfig
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ValidationError
 
 from graph.llm import get_llm
 from graph.state import SignalState
+
+MAX_ATTEMPTS = 2  # one retry on malformed/out-of-range output, then fail the run
 
 
 class PMVerdict(BaseModel):
@@ -29,5 +32,14 @@ def pm_node(state: SignalState, config: RunnableConfig) -> dict:
         "Respond with ONLY a JSON object matching this schema: "
         '{"decision": "BUY" | "HOLD" | "SELL", "confidence": <float 0.0-1.0>, "reasoning": <string>}.'
     )
-    verdict: PMVerdict = llm.invoke(prompt)
+    verdict: PMVerdict | None = None
+    for attempt in range(MAX_ATTEMPTS):
+        try:
+            verdict = llm.invoke(prompt)
+            break
+        except (ValidationError, OutputParserException):
+            # Malformed JSON or a value outside the schema (e.g. confidence 1.4).
+            # Retry once; a second failure propagates and fails the run cleanly.
+            if attempt == MAX_ATTEMPTS - 1:
+                raise
     return {"decision": verdict.decision, "confidence": verdict.confidence, "rationale": verdict.reasoning}
