@@ -89,11 +89,15 @@ class AlpacaBroker:
 
     def submit_market_order(self, symbol: str, qty: float, side: str) -> str:
         """Plain market order, no bracket -- used for exits of shares the user holds."""
+        # Alpaca accepts fractional equity orders only as DAY orders, while
+        # crypto accepts GTC but not DAY -- so the time-in-force depends on the
+        # asset class (an exit may be a fractional share count).
+        time_in_force = TimeInForce.GTC if is_crypto_symbol(symbol) else TimeInForce.DAY
         request = MarketOrderRequest(
             symbol=symbol,
             qty=qty,
             side=OrderSide.BUY if side == "buy" else OrderSide.SELL,
-            time_in_force=TimeInForce.GTC,
+            time_in_force=time_in_force,
         )
         return str(self._client.submit_order(request).id)
 
