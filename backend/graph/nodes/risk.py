@@ -4,6 +4,7 @@ from app.config import settings
 from db.models import Recommendation
 from graph.providers import is_crypto_symbol
 from graph.state import SignalState
+from graph.validation import validate_order_levels
 
 # Simple, deterministic MVP risk model (no PLAN.md formula specified): stop
 # distance scales with the quant node's annualized volatility, clamped to a
@@ -69,6 +70,18 @@ def risk_node(state: SignalState, config: RunnableConfig) -> dict:
             "3-10 trading days (swing)" if state["confidence"] >= 0.85 else "1-3 trading days (short-term)"
         )
 
+    # 2 decimal places fits USD-scale prices (equities and BTC/ETH-tier
+    # crypto alike); low-value altcoins would need more, but that's a
+    # precision refinement for later, not something blocking basic support.
+    price_precision = CRYPTO_QTY_PRECISION if is_crypto else 2
+
+    stop_price = round(stop_price, price_precision)
+    take_profit_price = round(take_profit_price, price_precision)
+
+    # Reject an inconsistent proposal before the ledger row exists, so it can
+    # never be shown for approval or turned into a bracket order.
+    validate_order_levels(state["decision"], price, stop_price, take_profit_price, proposed_qty)
+
     db = config["configurable"]["db"]
     recommendation = Recommendation(
         user_id=config["configurable"]["user_id"],
@@ -86,16 +99,11 @@ def risk_node(state: SignalState, config: RunnableConfig) -> dict:
     db.commit()
     db.refresh(recommendation)
 
-    # 2 decimal places fits USD-scale prices (equities and BTC/ETH-tier
-    # crypto alike); low-value altcoins would need more, but that's a
-    # precision refinement for later, not something blocking basic support.
-    price_precision = CRYPTO_QTY_PRECISION if is_crypto else 2
-
     return {
         "recommendation_id": recommendation.id,
         "entry_price_hint": price,
-        "stop_price": round(stop_price, price_precision),
-        "take_profit_price": round(take_profit_price, price_precision),
+        "stop_price": stop_price,
+        "take_profit_price": take_profit_price,
         "proposed_qty": proposed_qty,
         "recommended_timeline": recommended_timeline,
     }

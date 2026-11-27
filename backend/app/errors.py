@@ -2,6 +2,8 @@ import logging
 
 from groq import APIError, RateLimitError
 
+from graph.validation import InvalidRecommendationError
+
 logger = logging.getLogger(__name__)
 
 
@@ -12,6 +14,8 @@ def friendly_error_message(exc: Exception) -> str:
     real exception is still logged server-side so it's debuggable."""
     logger.exception("Signal graph run failed: %r", exc)
 
+    if isinstance(exc, InvalidRecommendationError):
+        return f"The agent proposed an invalid trade, so it was blocked. {exc}"
     if isinstance(exc, RateLimitError):
         return "The AI provider (Groq) is temporarily rate-limited. Wait a minute and try again."
     if isinstance(exc, APIError):
