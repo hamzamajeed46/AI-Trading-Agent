@@ -78,3 +78,6 @@ class AlpacaBroker:
 
     def get_buying_power(self) -> float:
         return float(self._client.get_account().buying_power)
+
+    def get_equity(self) -> float:
+        return float(self._client.get_account().equity)

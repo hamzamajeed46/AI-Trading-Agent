@@ -10,8 +10,9 @@ from graph.validation import validate_order_levels
 # distance scales with the quant node's annualized volatility, clamped to a
 # sane range so a very calm or very wild symbol doesn't produce a degenerate
 # stop; take-profit sits at a fixed 1:2 reward:risk multiple of that same
-# distance; position size risks a fixed dollar amount (settings.risk_per_trade_usd)
-# per trade, sized off the stop distance in dollars -- then capped against
+# distance; position size risks a percentage of the account's live equity
+# (settings.risk_per_trade_pct, capped at settings.risk_per_trade_cap_usd) per
+# trade, sized off the stop distance in dollars -- then capped against
 # the account's actual live buying power, so the risk formula alone can
 # never propose a trade bigger than the account can afford.
 MIN_STOP_PCT = 1.5
@@ -19,6 +20,12 @@ MAX_STOP_PCT = 8.0
 DEFAULT_VOLATILITY_PCT = 20.0
 REWARD_RISK_RATIO = 2.0
 CRYPTO_QTY_PRECISION = 6  # Alpaca crypto orders take fractional qty (e.g. 0.008 BTC)
+
+
+def compute_risk_budget(equity: float) -> float:
+    """Dollars this trade may lose if the stop is hit: a percentage of live
+    account equity, never more than the hard dollar cap."""
+    return min(equity * settings.risk_per_trade_pct / 100, settings.risk_per_trade_cap_usd)
 
 
 def risk_node(state: SignalState, config: RunnableConfig) -> dict:
@@ -40,21 +47,23 @@ def risk_node(state: SignalState, config: RunnableConfig) -> dict:
 
     is_crypto = is_crypto_symbol(state["symbol"])
 
+    broker = config["configurable"]["broker"]
+    risk_budget_usd = compute_risk_budget(broker.get_equity())
+
     # Equity bracket orders require whole shares; crypto orders are
     # fractional (a single BTC can be worth tens of thousands of dollars, so
     # truncating to a whole unit would round most crypto positions to 0).
     if is_crypto:
         risk_based_qty = (
-            round(settings.risk_per_trade_usd / stop_distance, CRYPTO_QTY_PRECISION) if stop_distance > 0 else 0.0
+            round(risk_budget_usd / stop_distance, CRYPTO_QTY_PRECISION) if stop_distance > 0 else 0.0
         )
     else:
-        risk_based_qty = int(settings.risk_per_trade_usd // stop_distance) if stop_distance > 0 else 1
+        risk_based_qty = int(risk_budget_usd // stop_distance) if stop_distance > 0 else 1
 
     # The dollar-risk formula above has no idea what the account can actually
     # afford -- it was sizing purely off the stop distance. Cap it against
     # the account's real, live buying power so a proposal can never exceed
     # what Alpaca would actually accept.
-    broker = config["configurable"]["broker"]
     buying_power = broker.get_buying_power()
     if is_crypto:
         affordable_qty = round(buying_power / price, CRYPTO_QTY_PRECISION) if price > 0 else 0.0

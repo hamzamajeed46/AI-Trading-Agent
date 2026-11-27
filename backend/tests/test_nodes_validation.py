@@ -21,9 +21,10 @@ def _state(decision="BUY"):
     }
 
 
-def _config(buying_power):
+def _config(buying_power, equity=100_000):
     broker = MagicMock()
     broker.get_buying_power.return_value = buying_power
+    broker.get_equity.return_value = equity
     db = MagicMock()
     return {"configurable": {"broker": broker, "db": db, "user_id": 1, "thread_id": "t"}}, db
 
@@ -83,3 +84,30 @@ def test_pm_fails_after_second_bad_output(monkeypatch):
     with pytest.raises(OutputParserException):
         pm_node(_pm_state(), {})
     assert fake.calls == 2
+
+
+def test_risk_budget_is_pct_of_equity_below_cap():
+    from graph.nodes.risk import compute_risk_budget
+
+    assert compute_risk_budget(10_000) == pytest.approx(50.0)  # 0.5% of $10k
+
+
+def test_risk_budget_is_capped_for_large_accounts():
+    from graph.nodes.risk import compute_risk_budget
+
+    assert compute_risk_budget(10_000_000) == 250.0  # 0.5% would be $50k; cap wins
+
+
+def test_small_account_gets_smaller_position_than_large_account():
+    small_cfg, _ = _config(buying_power=1_000_000, equity=10_000)
+    large_cfg, _ = _config(buying_power=1_000_000, equity=100_000)
+    small = risk_node(_state("BUY"), small_cfg)["proposed_qty"]
+    large = risk_node(_state("BUY"), large_cfg)["proposed_qty"]
+    assert 0 < small < large
+
+
+def test_zero_equity_blocked_before_ledger_write():
+    cfg, db = _config(buying_power=100_000, equity=0)
+    with pytest.raises(InvalidRecommendationError):
+        risk_node(_state("BUY"), cfg)
+    db.add.assert_not_called()
