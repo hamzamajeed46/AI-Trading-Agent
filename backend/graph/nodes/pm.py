@@ -26,9 +26,11 @@ def _position_instructions(held_qty: float) -> str:
             "HOLD (keep the position), SELL (exit the position they hold). Never answer AVOID.\n\n"
         )
     return (
-        "The user does NOT own this asset. Allowed decisions: BUY (open a position), HOLD "
-        "(no strong view, wait), AVOID (bearish: do not buy it now). Never answer SELL, because "
-        "there is nothing to sell.\n\n"
+        "The user does NOT own this asset. Allowed decisions: BUY (bullish: open a position), "
+        "HOLD (neutral: the evidence does not clearly favor either side, so wait and check back), "
+        "AVOID (bearish: the price is more likely to fall, so do not buy it now). The difference "
+        "between HOLD and AVOID is the direction of your view, not the action. Never answer SELL, "
+        "because there is nothing to sell.\n\n"
     )
 
 
@@ -70,4 +72,4 @@ def pm_node(state: SignalState, config: RunnableConfig) -> dict:
             if attempt == MAX_ATTEMPTS - 1:
                 raise
     decision = enforce_position_rules(verdict.decision, state.get("held_qty", 0.0))
-    return {"decision": decision, "confidence": verdict.confidence, "rationale": verdict.reasoning}
+    return {"held_qty": state.get("held_qty", 0.0), "decision": decision, "confidence": verdict.confidence, "rationale": verdict.reasoning}

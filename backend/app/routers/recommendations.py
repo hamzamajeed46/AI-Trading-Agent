@@ -53,6 +53,7 @@ async def analyze(
         "bull_args": result["bull_args"],
         "bear_args": result["bear_args"],
         "decision": result["decision"],
+        "held_qty": result.get("held_qty", 0.0),
         "confidence": result["confidence"],
         "rationale": result["rationale"],
     }

@@ -12,6 +12,7 @@ class AnalyzeResponse(BaseModel):
     bull_args: list[str]
     bear_args: list[str]
     decision: str
+    held_qty: float = 0.0
     confidence: float
     rationale: str
 
@@ -30,6 +31,7 @@ class RecommendationSummary(BaseModel):
     symbol: str
     asset_name: str | None = None
     decision: str
+    held_qty: float = 0.0
     confidence: float
     rationale: str
     proposed_qty: float | None = None

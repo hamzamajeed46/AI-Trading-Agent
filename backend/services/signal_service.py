@@ -103,6 +103,7 @@ def _to_summary(thread_id: str, result: dict) -> dict:
         "symbol": result["symbol"],
         "asset_name": result.get("asset_name"),
         "decision": result["decision"],
+        "held_qty": result.get("held_qty", 0.0),
         "confidence": result["confidence"],
         "rationale": result["rationale"],
         "proposed_qty": result.get("proposed_qty"),

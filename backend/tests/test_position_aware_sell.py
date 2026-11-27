@@ -118,3 +118,11 @@ def test_approved_sell_is_capped_at_held_quantity():
     broker.get_held_qty.return_value = 3  # proposed 5, only 3 held
     execution_node(_exec_state("SELL"), cfg)
     broker.submit_market_order.assert_called_once_with(symbol="AAPL", qty=3, side="sell")
+
+
+def test_pm_returns_held_qty_so_the_ui_can_label_neutral_calls(monkeypatch):
+    fake = _FakeLLM(pm_module.PMVerdict(decision="HOLD", confidence=0.6, reasoning="- unclear"))
+    monkeypatch.setattr(pm_module, "get_llm", lambda **k: fake)
+    out = pm_node(_pm_state(0), {})
+    assert out["decision"] == "HOLD" and out["held_qty"] == 0
+    assert "direction of your view" in fake.prompt

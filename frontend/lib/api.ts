@@ -127,6 +127,12 @@ export function connectBroker(
 
 export type Decision = "BUY" | "HOLD" | "SELL" | "AVOID";
 
+/** A neutral call on a stock the user doesn't own reads as "WAIT", since
+ * "HOLD" only makes sense when there are shares to hold. */
+export function decisionLabel(decision: Decision, heldQty?: number | null): string {
+  return decision === "HOLD" && !heldQty ? "WAIT" : decision;
+}
+
 export type AnalyzeResponse = {
   symbol: string;
   asset_name: string | null;
@@ -157,7 +163,7 @@ export type NodeUpdate = {
   quant?: { asset_name: string | null; price_at_call: number; metrics: AnalyzeResponse["metrics"] };
   bull?: { bull_args: string[]; round: number };
   bear?: { bear_args: string[] };
-  pm?: { decision: Decision; confidence: number; rationale: string };
+  pm?: { decision: Decision; held_qty?: number; confidence: number; rationale: string };
   error?: string;
 };
 
@@ -237,6 +243,7 @@ export type RecommendationSummary = {
   symbol: string;
   asset_name: string | null;
   decision: Decision;
+  held_qty?: number;
   confidence: number;
   rationale: string;
   proposed_qty: number | null;

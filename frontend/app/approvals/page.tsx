@@ -12,6 +12,7 @@ import {
   rejectRecommendation,
   startRecommendation,
   type RecommendationSummary,
+  decisionLabel,
 } from "@/lib/api";
 import RecommendationCard, { type Decision } from "@/app/components/RecommendationCard";
 import styles from "./page.module.css";
@@ -149,7 +150,7 @@ export default function ApprovalsPage() {
           <div className={styles.holdResult}>
             <span className={`${styles.holdBadge} mono`}>{lastNonPending.symbol}</span>
             <span>
-              Result: <strong>{lastNonPending.decision}</strong> at{" "}
+              Result: <strong>{decisionLabel(lastNonPending.decision, lastNonPending.held_qty)}</strong> at{" "}
               {Math.round(lastNonPending.confidence * 100)}% confidence —{" "}
               {lastNonPending.status === "avoid"
                 ? "bearish, but you don't hold this, so there's nothing to sell. Avoid buying it for now."

@@ -9,6 +9,7 @@ import {
   getToken,
   type AnalyzeResponse,
   type Decision,
+  decisionLabel,
 } from "@/lib/api";
 import ConfidenceMeter from "@/app/components/ConfidenceMeter";
 import Markdown from "@/app/components/Markdown";
@@ -32,7 +33,7 @@ function formatMetric(value: number | null, suffix = ""): string {
   return value === null ? "—" : `${value}${suffix}`;
 }
 
-type Verdict = { decision: Decision; confidence: number; rationale: string };
+type Verdict = { decision: Decision; held_qty?: number; confidence: number; rationale: string };
 
 export default function AnalyzePage() {
   const router = useRouter();
@@ -148,7 +149,7 @@ export default function AnalyzePage() {
             <span className={`${styles.symbol} mono`}>{symbol.trim().toUpperCase()}</span>
             {verdict ? (
               <span className={`${styles.decisionBadge} ${DECISION_STYLE[verdict.decision]}`}>
-                {verdict.decision}
+                {decisionLabel(verdict.decision, verdict.held_qty)}
               </span>
             ) : (
               <span className={styles.liveTag}>
