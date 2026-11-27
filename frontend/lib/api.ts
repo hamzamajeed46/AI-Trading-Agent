@@ -125,7 +125,7 @@ export function connectBroker(
   });
 }
 
-export type Decision = "BUY" | "HOLD" | "SELL";
+export type Decision = "BUY" | "HOLD" | "SELL" | "AVOID";
 
 export type AnalyzeResponse = {
   symbol: string;
@@ -224,6 +224,7 @@ export async function analyzeSymbolStream(
 export type RecommendationStatus =
   | "pending_approval"
   | "hold"
+  | "avoid"
   | "submitted"
   | "rejected"
   | "failed"

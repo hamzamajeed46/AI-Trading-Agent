@@ -4,7 +4,7 @@ from app.config import settings
 from db.models import Recommendation
 from graph.providers import is_crypto_symbol
 from graph.state import SignalState
-from graph.validation import validate_order_levels
+from graph.validation import validate_exit, validate_order_levels
 
 # Simple, deterministic MVP risk model (no PLAN.md formula specified): stop
 # distance scales with the quant node's annualized volatility, clamped to a
@@ -28,22 +28,58 @@ def compute_risk_budget(equity: float) -> float:
     return min(equity * settings.risk_per_trade_pct / 100, settings.risk_per_trade_cap_usd)
 
 
+def _write_pending_recommendation(state: SignalState, config: RunnableConfig) -> Recommendation:
+    db = config["configurable"]["db"]
+    recommendation = Recommendation(
+        user_id=config["configurable"]["user_id"],
+        thread_id=config["configurable"]["thread_id"],
+        symbol=state["symbol"],
+        round=state["round"],
+        decision=state["decision"],
+        confidence=state["confidence"],
+        rationale=state["rationale"],
+        metrics_json=state["metrics"],
+        mode=state.get("mode", "live"),
+        status="pending_approval",
+    )
+    db.add(recommendation)
+    db.commit()
+    db.refresh(recommendation)
+    return recommendation
+
+
+def _exit_proposal(state: SignalState, config: RunnableConfig) -> dict:
+    """SELL means exit the shares the user already holds: sell exactly the
+    held quantity with a plain market order. No stop/take-profit, since the
+    position is being closed, not opened."""
+    held_qty = state.get("held_qty", 0.0)
+    validate_exit(state["price_at_call"], held_qty)
+    recommendation = _write_pending_recommendation(state, config)
+    return {
+        "recommendation_id": recommendation.id,
+        "entry_price_hint": state["price_at_call"],
+        "stop_price": None,
+        "take_profit_price": None,
+        "proposed_qty": held_qty,
+        "recommended_timeline": "Exit now",
+    }
+
+
 def risk_node(state: SignalState, config: RunnableConfig) -> dict:
     """Turns the PM's BUY/SELL decision into concrete order parameters and
     writes the pending-approval ledger row. This write belongs here, not in
     human_approval_node -- only the interrupting node re-executes on resume,
     so a DB write there would run twice (once per approve/reject call)."""
+    if state["decision"] == "SELL":
+        return _exit_proposal(state, config)
+
     price = state["price_at_call"]
     volatility_pct = state["metrics"].get("volatility_pct") or DEFAULT_VOLATILITY_PCT
     stop_distance_pct = min(max(volatility_pct / 10, MIN_STOP_PCT), MAX_STOP_PCT)
     stop_distance = price * stop_distance_pct / 100
 
-    if state["decision"] == "BUY":
-        stop_price = price - stop_distance
-        take_profit_price = price + stop_distance * REWARD_RISK_RATIO
-    else:  # SELL -- opens a short position, so stop/take-profit mirror around price
-        stop_price = price + stop_distance
-        take_profit_price = price - stop_distance * REWARD_RISK_RATIO
+    stop_price = price - stop_distance
+    take_profit_price = price + stop_distance * REWARD_RISK_RATIO
 
     is_crypto = is_crypto_symbol(state["symbol"])
 
@@ -91,22 +127,7 @@ def risk_node(state: SignalState, config: RunnableConfig) -> dict:
     # never be shown for approval or turned into a bracket order.
     validate_order_levels(state["decision"], price, stop_price, take_profit_price, proposed_qty)
 
-    db = config["configurable"]["db"]
-    recommendation = Recommendation(
-        user_id=config["configurable"]["user_id"],
-        thread_id=config["configurable"]["thread_id"],
-        symbol=state["symbol"],
-        round=state["round"],
-        decision=state["decision"],
-        confidence=state["confidence"],
-        rationale=state["rationale"],
-        metrics_json=state["metrics"],
-        mode=state.get("mode", "live"),
-        status="pending_approval",
-    )
-    db.add(recommendation)
-    db.commit()
-    db.refresh(recommendation)
+    recommendation = _write_pending_recommendation(state, config)
 
     return {
         "recommendation_id": recommendation.id,

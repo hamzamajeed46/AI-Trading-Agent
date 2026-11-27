@@ -18,12 +18,14 @@ const DECISION_STYLE: Record<Decision, string> = {
   BUY: styles.decisionBuy,
   SELL: styles.decisionSell,
   HOLD: styles.decisionHold,
+  AVOID: styles.decisionHold,
 };
 
 const METER_COLOR: Record<Decision, string> = {
   BUY: "var(--color-buy)",
   SELL: "var(--color-sell)",
   HOLD: "var(--foreground-muted)",
+  AVOID: "var(--foreground-muted)",
 };
 
 function formatMetric(value: number | null, suffix = ""): string {

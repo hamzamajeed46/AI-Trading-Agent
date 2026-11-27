@@ -22,6 +22,7 @@ from services.signal_service import (
     RecommendationNotPendingError,
     list_recommendations,
     respond_to_recommendation,
+    get_held_qty_for_user,
     run_signal_for_user,
     start_recommendation,
     stream_signal,
@@ -69,12 +70,13 @@ def analyze_stream(
     # connection can still become a normal 400.
     try:
         provider = build_provider_for_user(db, current_user.id, symbol)
+        held_qty = get_held_qty_for_user(db, current_user.id, symbol)
     except NoBrokerConnectionError as exc:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(exc))
 
     def event_generator():
         try:
-            for update in stream_signal(provider, symbol):
+            for update in stream_signal(provider, symbol, held_qty):
                 yield json.dumps(update, default=str) + "\n"
         except Exception as exc:
             # Mid-stream failures (e.g. a Groq API error) can't become an

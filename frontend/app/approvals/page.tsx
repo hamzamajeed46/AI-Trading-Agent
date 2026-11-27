@@ -151,8 +151,8 @@ export default function ApprovalsPage() {
             <span>
               Result: <strong>{lastNonPending.decision}</strong> at{" "}
               {Math.round(lastNonPending.confidence * 100)}% confidence —{" "}
-              {lastNonPending.status === "not_executable"
-                ? "Alpaca doesn't support shorting crypto, so there's nothing to approve."
+              {lastNonPending.status === "avoid"
+                ? "bearish, but you don't hold this, so there's nothing to sell. Avoid buying it for now."
                 : "nothing to approve."}
             </span>
           </div>
@@ -212,7 +212,9 @@ export default function ApprovalsPage() {
                   timeline: rec.recommended_timeline,
                 }}
                 warning={
-                  rec.symbol.includes("/")
+                  rec.decision === "SELL"
+                    ? `Approving sells your ${rec.proposed_qty} held shares at market price. No stop-loss or take-profit applies, because you are closing the position.`
+                    : rec.symbol.includes("/")
                     ? "Alpaca doesn't support bracket orders for crypto — approving submits a plain market order with no automatic stop-loss/take-profit. The stop/take-profit above are informational only; you'd need to monitor and exit manually."
                     : undefined
                 }

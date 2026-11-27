@@ -37,10 +37,20 @@ def test_risk_node_valid_buy_writes_row_and_levels_are_ordered():
     db.add.assert_called_once()
 
 
-def test_risk_node_valid_sell_levels_are_mirrored():
-    cfg, _ = _config(100_000)
-    out = risk_node(_state("SELL"), cfg)
-    assert out["take_profit_price"] < out["entry_price_hint"] < out["stop_price"]
+def test_risk_node_sell_is_an_exit_of_held_shares():
+    cfg, db = _config(100_000)
+    state = {**_state("SELL"), "held_qty": 12}
+    out = risk_node(state, cfg)
+    assert out["proposed_qty"] == 12
+    assert out["stop_price"] is None and out["take_profit_price"] is None
+    db.add.assert_called_once()
+
+
+def test_risk_node_sell_without_shares_is_blocked_before_ledger_write():
+    cfg, db = _config(100_000)
+    with pytest.raises(InvalidRecommendationError):
+        risk_node({**_state("SELL"), "held_qty": 0}, cfg)
+    db.add.assert_not_called()
 
 
 def test_risk_node_zero_qty_blocked_before_ledger_write():

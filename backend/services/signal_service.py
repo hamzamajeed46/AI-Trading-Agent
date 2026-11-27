@@ -1,3 +1,4 @@
+import asyncio
 import uuid
 from typing import Iterator
 
@@ -18,7 +19,7 @@ class RecommendationNotPendingError(Exception):
     pass
 
 
-def _initial_state(symbol: str) -> dict:
+def _initial_state(symbol: str, held_qty: float = 0.0) -> dict:
     return {
         "symbol": symbol.upper(),
         "asset_name": None,
@@ -27,6 +28,7 @@ def _initial_state(symbol: str) -> dict:
         "bull_args": [],
         "bear_args": [],
         "round": 0,
+        "held_qty": held_qty,
         "decision": "",
         "confidence": 0.0,
         "rationale": "",
@@ -44,6 +46,12 @@ def _initial_state(symbol: str) -> dict:
     }
 
 
+def get_held_qty_for_user(db: Session, user_id: str, symbol: str) -> float:
+    """Shares of `symbol` the user holds on their connected account (0.0 if
+    none). The PM needs this: SELL is only a valid call for shares you own."""
+    return build_broker_for_user(db, user_id).get_held_qty(symbol)
+
+
 def run_signal_for_user(db: Session, user_id: str, symbol: str) -> dict:
     """Builds this user's Alpaca provider, runs the signal graph for `symbol`,
     and returns the final state. Shared by scripts/run_signal.py (CLI) and
@@ -54,12 +62,13 @@ def run_signal_for_user(db: Session, user_id: str, symbol: str) -> dict:
     The persisted human-in-the-loop pipeline is services/signal_service.py's
     start_recommendation/respond_to_recommendation instead."""
     provider = build_provider_for_user(db, user_id, symbol)
+    held_qty = get_held_qty_for_user(db, user_id, symbol)
     graph = build_signal_graph(include_execution=False)
     config = {"configurable": {"market_data_provider": provider}, "recursion_limit": 25}
-    return graph.invoke(_initial_state(symbol), config=config)
+    return graph.invoke(_initial_state(symbol, held_qty), config=config)
 
 
-def stream_signal(provider: MarketDataProvider, symbol: str) -> Iterator[dict]:
+def stream_signal(provider: MarketDataProvider, symbol: str, held_qty: float = 0.0) -> Iterator[dict]:
     """Yields one {node_name: partial_state} dict per completed node, instead
     of blocking until the whole graph finishes -- lets a caller (the
     /analyze/{symbol}/stream endpoint) show each debate round as it's
@@ -70,7 +79,7 @@ def stream_signal(provider: MarketDataProvider, symbol: str) -> Iterator[dict]:
     Same preview shape as run_signal_for_user -- see its docstring."""
     graph = build_signal_graph(include_execution=False)
     config = {"configurable": {"market_data_provider": provider}, "recursion_limit": 25}
-    yield from graph.stream(_initial_state(symbol), config=config, stream_mode="updates")
+    yield from graph.stream(_initial_state(symbol, held_qty), config=config, stream_mode="updates")
 
 
 def _to_summary(thread_id: str, result: dict) -> dict:
@@ -79,13 +88,13 @@ def _to_summary(thread_id: str, result: dict) -> dict:
         response_status = "pending_approval"
     elif result["decision"] == "HOLD":
         response_status = "hold"
+    elif result["decision"] == "AVOID":
+        response_status = "avoid"
     elif result.get("execution_status"):
         response_status = result["execution_status"]  # "submitted" | "rejected" | "failed"
     else:
-        # Reached END without ever pausing or executing -- only happens for
-        # a SELL verdict on a crypto symbol, since Alpaca doesn't support
-        # shorting crypto (route_after_pm routes that case straight to END
-        # instead of risk_node -- see graph/signal_graph.py).
+        # Reached END without ever pausing or executing -- shouldn't happen
+        # now that SELL is only ever an exit of held shares.
         response_status = "not_executable"
 
     return {
@@ -130,7 +139,8 @@ async def start_recommendation(app_graph, db: Session, user_id: str, symbol: str
     restart while paused at the interrupt."""
     thread_id = str(uuid.uuid4())
     config = _recommendation_config(db, user_id, thread_id, symbol)
-    result = await app_graph.ainvoke(_initial_state(symbol), config=config)
+    held_qty = await asyncio.to_thread(get_held_qty_for_user, db, user_id, symbol)
+    result = await app_graph.ainvoke(_initial_state(symbol, held_qty), config=config)
     return _to_summary(thread_id, result)
 
 

@@ -7,7 +7,6 @@ from graph.nodes.human_approval import human_approval_node
 from graph.nodes.pm import pm_node
 from graph.nodes.quant import quant_node
 from graph.nodes.risk import risk_node
-from graph.providers import is_crypto_symbol
 from graph.state import SignalState
 
 CONFIDENCE_THRESHOLD = 0.7
@@ -18,13 +17,10 @@ def route_after_pm(state: SignalState) -> str:
     confident = state["confidence"] >= CONFIDENCE_THRESHOLD or state["round"] >= MAX_ROUNDS
     if not confident:
         return "loop"
-    if state["decision"] == "HOLD":
-        return "end"
-    # Alpaca doesn't support shorting crypto -- a SELL verdict with no
-    # existing position isn't executable the way it is for equities, so
-    # there's nothing to size/approve. End here rather than proposing a
-    # trade risk_node can't actually turn into an order.
-    if state["decision"] == "SELL" and is_crypto_symbol(state["symbol"]):
+    # HOLD (wait) and AVOID (bearish, not held) have nothing to approve. SELL
+    # only ever reaches here when the user actually holds shares (pm_node
+    # enforces that), so it is an exit, never an accidental short.
+    if state["decision"] in ("HOLD", "AVOID"):
         return "end"
     return "risk"
 

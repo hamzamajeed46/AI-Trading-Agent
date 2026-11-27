@@ -10,7 +10,8 @@ class SignalState(TypedDict):
     bull_args: Annotated[list[str], operator.add]
     bear_args: Annotated[list[str], operator.add]
     round: int
-    decision: str
+    held_qty: float  # shares of this symbol the user currently holds (long only; 0 if none)
+    decision: str  # BUY | HOLD | SELL (exit, only if held) | AVOID (bearish, not held)
     confidence: float
     rationale: str
     mode: str  # "live" | "backtest"

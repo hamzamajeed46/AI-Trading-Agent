@@ -13,6 +13,15 @@ def _is_positive_number(value) -> bool:
     return isinstance(value, (int, float)) and math.isfinite(value) and value > 0
 
 
+def validate_exit(price: float, held_qty: float) -> None:
+    """An exit sells shares the user holds, so there must be a positive price
+    and a positive held quantity; otherwise it would be an accidental short."""
+    if not _is_positive_number(price):
+        raise InvalidRecommendationError(f"Invalid price for exit: {price!r}.")
+    if not _is_positive_number(held_qty):
+        raise InvalidRecommendationError("Cannot sell: you don't hold any shares of this symbol.")
+
+
 def validate_order_levels(
     decision: str, entry: float, stop: float, take_profit: float, qty: float
 ) -> None:

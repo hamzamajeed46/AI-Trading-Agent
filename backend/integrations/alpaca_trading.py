@@ -79,5 +79,23 @@ class AlpacaBroker:
     def get_buying_power(self) -> float:
         return float(self._client.get_account().buying_power)
 
+    def get_held_qty(self, symbol: str) -> float:
+        """Shares of `symbol` held long (0.0 if none or a short position).
+        Crypto positions are keyed without the slash ("BTCUSD")."""
+        position = self.get_position(symbol.replace("/", ""))
+        if position is None:
+            return 0.0
+        return max(float(position.qty), 0.0)
+
+    def submit_market_order(self, symbol: str, qty: float, side: str) -> str:
+        """Plain market order, no bracket -- used for exits of shares the user holds."""
+        request = MarketOrderRequest(
+            symbol=symbol,
+            qty=qty,
+            side=OrderSide.BUY if side == "buy" else OrderSide.SELL,
+            time_in_force=TimeInForce.GTC,
+        )
+        return str(self._client.submit_order(request).id)
+
     def get_equity(self) -> float:
         return float(self._client.get_account().equity)
