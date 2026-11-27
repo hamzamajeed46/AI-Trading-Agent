@@ -192,7 +192,7 @@ export default function AnalyzePage() {
 
           {verdict && (
             <>
-              <ConfidenceMeter confidence={verdict.confidence} color={METER_COLOR[verdict.decision]} />
+              <ConfidenceMeter confidence={Math.round(verdict.confidence * 100)} color={METER_COLOR[verdict.decision]} />
               <div className={styles.rationale}>
                 {!done && (
                   <span className={styles.provisionalTag}>PROVISIONAL — debate may continue </span>
